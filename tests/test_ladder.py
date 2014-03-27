@@ -7,45 +7,34 @@ from ladder import URL, API
 class TestURL(TestCase):
 
     def test_empty_url(self):
-        self.assertEqual(
-            str(URL()),
-            ''
-        )
+        self.assertEqual(str(URL()), '')
 
     def test_initialized_url(self):
-        self.assertEqual(
-            str(URL('http://github.com')),
-            'http://github.com'
-        )
+        self.assertEqual(str(URL('http://github.com')), 'http://github.com')
 
     def test_chaining(self):
-        self.assertEqual(
-            str(URL().foo.bar(1, 'one').baz(a='a').qux),
-            'foo/bar/1/one/baz/qux?a=a'
-        )
+        self.assertEqual(str(URL().foo.bar(1, 'one').baz(a='a').qux), 'foo/bar/1/one/baz/qux?a=a')
 
     def test_params(self):
-        self.assertEqual(
-            str(URL()(a=1).foo.bar),
-            'foo/bar?a=1'
-        )
+        url = URL()('/foo?a=1&b=2').bar(c=3)('?a=0')
+        urlsplit = str(url).split('?')
+
+        self.assertEqual(len(urlsplit), 2)
+
+        params = urlsplit[1].split('&')
+
+        self.assertEqual(urlsplit[0], '/foo/bar/')
+        self.assertEqual(set(params), set(['a=1', 'b=2', 'c=3']))
+
+    def test_leading_slash(self):
+        self.assertEqual(str(URL()('/foo').bar), '/foo/bar')
 
     def test_append_slash(self):
-        self.assertEqual(
-            str(URL().foo),
-            'foo'
-        )
-
-        self.assertEqual(
-            str(URL(append_slash=True).foo),
-            'foo/'
-        )
+        self.assertEqual(str(URL().foo), 'foo')
+        self.assertEqual(str(URL(append_slash=True).foo), 'foo/')
 
     def test_port(self):
-        self.assertEqual(
-            str(URL('http://github.com:8000').foo.bar),
-            'http://github.com:8000/foo/bar'
-        )
+        self.assertEqual(str(URL('http://github.com:8000').foo.bar), 'http://github.com:8000/foo/bar')
 
     def test_add_operator_with_url(self):
         url = URL('start/of/path') + URL('end/of/path')

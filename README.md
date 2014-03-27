@@ -181,5 +181,5 @@ api = Ladder(requests.session(), '/api/', uppercase_methods=False)
 api.item('get').details.get()
 ```
 
-[hammock]: https://api.github.com/kadirpekel/hammock
-[requests]: https://api.github.com/kennethreitz/requests
+[hammock]: https://github.com/kadirpekel/hammock
+[requests]: https://github.com/kennethreitz/requests

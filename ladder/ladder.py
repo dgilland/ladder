@@ -119,12 +119,15 @@ def urlpathjoin(*paths):
     '''Join URL paths into single URL while maintaining leading and trailing slashes
     if present on first and last elements respectively.
 
+    >>> assert urlpathjoin('') == ''
+    >>> assert urlpathjoin(['', '/a']) == '/a'
+    >>> assert urlpathjoin(['', '/a', '', '', 'b']) == '/a/b'
     >>> assert urlpathjoin(['/a/', 'b/', '/c', 'd', 'e/']) == '/a/b/c/d/e/'
     >>> assert urlpathjoin(['a', 'b', 'c']) == 'a/b/c'
     >>> assert urlpathjoin('/', 'a', 'b', 'c', 1, '/') == '/a/b/c/1/'
     >>> assert urlpathjoin([]) == ''
     '''
-    paths = [text_type(path) for path in flatten(paths)]
+    paths = [text_type(path) for path in flatten(paths) if path]
     leading = '/' if paths and paths[0].startswith('/') else ''
     trailing = '/' if paths and paths[-1].endswith('/') else ''
     url = leading + '/'.join([p.strip('/') for p in paths if p.strip('/')]) + trailing

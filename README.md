@@ -7,7 +7,7 @@
 |_|\__,_|\__,_|\__,_|\___|_|
 ```
 
-[![Package Version](https://pypip.in/v/ladder/badge.png?v=0.2.0)](https://pypi.python.org/pypi/ladder/)
+[![Package Version](https://pypip.in/v/ladder/badge.png?v=0.2.1)](https://pypi.python.org/pypi/ladder/)
 [![Build Status](https://travis-ci.org/dgilland/ladder.png?branch=master)](https://travis-ci.org/dgilland/ladder)
 [![Coverage Status](https://coveralls.io/repos/dgilland/ladder/badge.png?branch=master)](https://coveralls.io/r/dgilland/ladder)
 [![License](https://pypip.in/license/ladder/badge.png)](https://pypi.python.org/pypi/ladder/)
@@ -110,11 +110,11 @@ Need that slash at the end?
 ```python
 print(URL('/').search)
 # /search
-# well that isn't what you want
+# ...well that isn't what you want
 
 print(URL('/', append_slash=True).search)
 # /search/
-# ah, that's better!
+# ...ah, that's better!
 ```
 
 Create partial URL paths:

@@ -15,7 +15,7 @@ __title__ = 'ladder'
 __summary__ = 'HTTP client wrapper with URL generation via object notation and argument passing'
 __url__ = 'https://github.com/dgilland/ladder'
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
 __author__ = 'Derrick Gilland'
 __email__ = 'dgilland@gmail.com'

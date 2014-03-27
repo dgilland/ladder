@@ -17,6 +17,17 @@ HTTP client wrapper with URL generation via object notation and argument passing
 
 Inspired by [hammock] but without the [requests] dependency (you provide that yourself if you want it).
 
+But why use `ladder` instead of `hammock`?
+
+- Python 3 compatibility!
+- No `requests` dependency. If your using `hammock` then you probably already want to use `requests`. But for those of you who are using another type of HTTP client, then `ladder` can be your `hammock`.
+- Since there's no `requests` dependency, you can generate URLs using `ladder.URL` without having an HTTP client.
+- Inline handling of query string parameters. `hammock` requires that query parameters be passed into the `requests` method call (e.g. `Hammock(...).GET(params={...}`). But with `ladder.API`, you can provide those via keyword arguments at any time during URL generation (e.g. `API(...)(sort='stars').GET()`) or you can stick with `hammock`'s style (`API(...).GET(params={...}`).
+- You can force the HTTP method functions to be lowercase instead of UPPERCASE, i.e., `API(...).GET()` or `API(..., upper_methods=False).get()`.
+
+Beyond that the differences between `ladder` and `hammock` are under the hood.
+
+
 ## Requirements
 
 ### Compatibility

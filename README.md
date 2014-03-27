@@ -8,9 +8,14 @@
 
 ```
 
+[![Package Version](https://pypip.in/v/ladder/badge.png?v=0.0.1)](https://pypi.python.org/pypi/ladder/)
+[![Build Status](https://travis-ci.org/dgilland/ladder.png?branch=master)](https://travis-ci.org/dgilland/ladder)
+[![Coverage Status](https://coveralls.io/repos/dgilland/ladder/badge.png?branch=master)](https://coveralls.io/r/dgilland/ladder)
+[![License](https://pypip.in/license/ladder/badge.png)](https://pypi.python.org/pypi/ladder/)
+
 HTTP client wrapper with URL generation via object notation and argument passing.
 
-Inspired by [hammock] but more utility-like, no [requests] dependency (you provide that yourself if you want it), and focused more on URL generation using a similar style.
+Inspired by [hammock] but without the [requests] dependency (you provide that yourself if you want it).
 
 ## Requirements
 

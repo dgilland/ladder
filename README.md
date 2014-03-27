@@ -54,7 +54,8 @@ pip install ladder
 `ladder` has two main classes:
 
 - `ladder.URL`: Utility class for generating URLs via objection notation and argument passing.
-- `ladder.Ladder`: HTTP client wrapper which uses `URL` to generate URLs that can be passed to the client when making HTTP method calls (e.g. `get`, `post`, etc).
+- `ladder.API`: HTTP client wrapper which uses `URL` to generate URLs that can be passed to the client when making HTTP method calls (e.g. `GET`, `POST`, etc).
+
 
 ### URL
 
@@ -73,15 +74,15 @@ print(search)
 
 repositories = search.repositories(q='ladder', sort='stars')
 print(repositories)
-# https://api.github.com/search/repositories?q=ladder&sort=starts&order=desc
+# https://api.github.com/search/repositories?q=ladder&sort=stars
 ```
 
 Don't want to use object notation? You don't have to:
 
 ```python
-URL('https://api.github.com')('search')('repositories')(q='ladder')
+URL('https://api.github.com')('users')('dgilland/repos', sort='updated')
 # or all in one
-URL('https://api.github.com')('search', 'repositories', q='ladder')
+URL('https://api.github.com', 'users/dgilland', 'repos', sort='updated')
 ```
 
 Mix-and-match:
@@ -102,21 +103,16 @@ And lists of lists (because `URL` supports flattening):
 URL('https://api.github.com')([['search', ['repositories']]], q='ladder')
 ```
 
-Ensure a slash comes last:
+Need that slash at the end?
 
 ```python
 print(URL('/').search)
 # /search
+# well that isn't what you want
 
 print(URL('/', append_slash=True).search)
 # /search/
-```
-
-Don't initialize `URL`:
-
-```python
-print(URL()('https://api.github.com').search)
-# https://api.github.com/search
+# ah, that's better!
 ```
 
 Create partial URL paths:
@@ -150,45 +146,48 @@ URL(start) / middle / end
 start / middle / URL(end)
 ```
 
-### Ladder
 
-Do what `URL` does but make an HTTP request at the end (_provided you give it a client_)! Now we're really trying to be like [hammock].
+### API
+
+Do what `URL` does but make an HTTP request at the end (_provided you give it a client_)! Now we're really trying to be like `hammock`.
 
 After installing [requests]:
 
 ```python
 import requests
-from ladder import Ladder
+from ladder import API
 
 # If you need to configure your requests session,
-# better do it before passing it into Ladder().
-# Ladder assumes your client is ready-to-go and doesn't
-# provide an easy way to configure it once it's passed in.
-Rung = Ladder(requests.session())
+# it's best to do it before passing it into API().
+Hammock = API(requests.session())
 
-github = Rung('https://api.github.com')
+# However, if you can't preconfigure the requests session...
+Hammock.__client__.auth = ('user', 'pass')
+Hammock.__client__.headers.update({'x-test': True})
+
+github = Hammock('https://api.github.com')
 results = github.search.repositories(q='ladder').GET().json()
 
-api = Rung('https://api.example.com')
-data = {}
-api.users.POST(data).json()
+api = Hammock('https://api.example.com')
+data = {'a': 1, 'b': 2}
+api.users.POST(data, headers={}, auth=()).json()
 api.users(1).PUT(data).json()
 api.users(1).DELETE().json()
 api.users.HEAD()
 api.users.OPTIONS()
 ```
 
-Don't like having to use UPPERCASE HTTP METHODS? No problem! `Ladder` has you covered:
+Don't like having to use UPPERCASE HTTP METHODS? No problem! `API` has you covered:
 
 ```python
-github = Ladder(requests.session(), 'https://api.github.com', uppercase_methods=False)
+github = API(requests.session(), 'https://api.github.com', upper_methods=False)
 results = github.search.repositories(q='ladder').get().json()
 ```
 
 Just remember you'll need to pass a `string` for any of the lowercase HTTP methods that are in the URL path:
 
 ```python
-api = Ladder(requests.session(), '/api/', uppercase_methods=False)
+api = API(requests.session(), '/api/', upper_methods=False)
 api.item('get').details.get()
 ```
 

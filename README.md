@@ -8,7 +8,7 @@
 
 ```
 
-[![Package Version](https://pypip.in/v/ladder/badge.png?v=0.0.1)](https://pypi.python.org/pypi/ladder/)
+[![Package Version](https://pypip.in/v/ladder/badge.png?v=0.1.0)](https://pypi.python.org/pypi/ladder/)
 [![Build Status](https://travis-ci.org/dgilland/ladder.png?branch=master)](https://travis-ci.org/dgilland/ladder)
 [![Coverage Status](https://coveralls.io/repos/dgilland/ladder/badge.png?branch=master)](https://coveralls.io/r/dgilland/ladder)
 [![License](https://pypip.in/license/ladder/badge.png)](https://pypi.python.org/pypi/ladder/)

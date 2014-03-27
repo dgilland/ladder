@@ -86,7 +86,7 @@ class URL(object):
         return self.__class__(**state)
 
 
-class Ladder(URL):
+class API(URL):
     '''Add URL generation to an HTTP request client. Requires that the `client` support
     HTTP verbs as lowercase methods. An example client would be the one from Requests package.
 
@@ -96,7 +96,7 @@ class Ladder(URL):
     __http_methods__ = ['head', 'options', 'get', 'post', 'put', 'patch', 'delete']
 
     def __init__(self, client, url='', params=None, append_slash=False, uppercase_methods=True):
-        super(Ladder, self).__init__(url, params, append_slash)
+        super(API, self).__init__(url, params, append_slash)
         self.__client__ = client
         self.__uppercase_methods__ = uppercase_methods
 
@@ -110,7 +110,7 @@ class Ladder(URL):
             # Proxy call to client method with url bound to first argument.
             return partial(getattr(self.__client__, attr.lower()), self.__geturl__())
         else:
-            return super(Ladder, self).__getattr__(attr)
+            return super(API, self).__getattr__(attr)
 
 
 def urlpathjoin(*paths):

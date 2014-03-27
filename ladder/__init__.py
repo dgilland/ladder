@@ -1,7 +1,7 @@
 '''Package API
 '''
 
-from .ladder import URL, Ladder, urlpathjoin, flatten, iterflatten
+from .ladder import URL, API, urlpathjoin, flatten, iterflatten
 
 from .__meta__ import (
     __title__,
@@ -13,4 +13,4 @@ from .__meta__ import (
     __license__
 )
 
-__all__ = ['URL', 'Ladder', 'urlpathjoin', 'flatten', 'iterflatten']
+__all__ = ['URL', 'API', 'urlpathjoin', 'flatten', 'iterflatten']

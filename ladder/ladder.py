@@ -13,6 +13,7 @@ from ._compat import (
 
 
 class URLSplitParts(object):
+    '''Convert return from urlsplit into an updatable named attribute object.'''
     def __init__(self, scheme, netloc, path, query, fragment):
         self.scheme = scheme
         self.netloc = netloc
@@ -22,6 +23,7 @@ class URLSplitParts(object):
 
     def __iter__(self):
         return iter([self.scheme, self.netloc, self.path, self.query, self.fragment])
+
 
 class URL(object):
     '''Generate URLs using object notation.'''
@@ -84,7 +86,9 @@ class URL(object):
         urlparts = self.__urlparts__
         if urlparts.query:
             # move url query to params and remove it from url string
-            self.__params__ = dict(parse_qsl(urlparts.query) + self.__params__.items())
+            params = dict(parse_qsl(urlparts.query))
+            params.update(self.__params__)
+            self.__params__ = params
             urlparts.query = None
         self.__url__ = urlunsplit(urlparts)
 
@@ -95,6 +99,7 @@ class URL(object):
 
     @property
     def __urlparts__(self):
+        '''Return urlsplit as URLSplitParts object.'''
         return URLSplitParts(*self.__urlsplit__)
 
     def __getattr__(self, path):

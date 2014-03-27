@@ -8,9 +8,9 @@ import sys
 PY3 = sys.version_info[0] == 3
 
 if PY3:  # pragma: no cover
-    from urllib.parse import urlencode, urlsplit, urlunsplit, parse_qs
+    from urllib.parse import urlencode, urlsplit, urlunsplit, parse_qs, parse_qsl
     text_type = str
 else:  # pragma: no cover
     from urllib import urlencode
-    from urlparse import urlsplit, urlunsplit, parse_qs
+    from urlparse import urlsplit, urlunsplit, parse_qs, parse_qsl
     text_type = unicode

@@ -8,22 +8,35 @@ from ._compat import (
     urlencode,
     urlsplit,
     urlunsplit,
-    parse_qs
+    parse_qsl
 )
 
+
+class URLSplitParts(object):
+    def __init__(self, scheme, netloc, path, query, fragment):
+        self.scheme = scheme
+        self.netloc = netloc
+        self.path = path
+        self.query = query
+        self.fragment = fragment
+
+    def __iter__(self):
+        return iter([self.scheme, self.netloc, self.path, self.query, self.fragment])
 
 class URL(object):
     '''Generate URLs using object notation.'''
 
     __attrs__ = ['__url__', '__params__', '__append_slash__']
 
-    def __init__(self, url='', params=None, append_slash=False):
+    def __init__(self, url=None, params=None, append_slash=False):
         if params is None:
             params = {}
 
         self.__url__ = urlpathjoin(url)
         self.__params__ = params
         self.__append_slash__ = append_slash
+
+        self.__mergeparams__()
 
     def __str__(self):
         return self.__geturl__()
@@ -57,21 +70,32 @@ class URL(object):
     def __geturl__(self):
         '''Return current URL as string. Combines query string parameters found in
         string URL with any named parameters created during `__call__`.'''
-        scheme, netloc, path, query, fragment = self.__urlsplit__
+        urlparts = self.__urlparts__
 
-        if self.__append_slash__ and not path.endswith('/'):
-            path = path + '/'
+        if self.__append_slash__ and not urlparts.path.endswith('/'):
+            urlparts.path = urlparts.path + '/'
 
-        query = dict(parse_qs(query))
-        query.update(self.__params__)
-        query = urlencode(query)
+        urlparts.query = urlencode(self.__params__)
 
-        return urlunsplit((scheme, netloc, path, query, fragment))
+        return urlunsplit(urlparts)
+
+    def __mergeparams__(self):
+        '''Extract any query string parameters from URL and merge with `params`.'''
+        urlparts = self.__urlparts__
+        if urlparts.query:
+            # move url query to params and remove it from url string
+            self.__params__ = dict(parse_qsl(urlparts.query) + self.__params__.items())
+            urlparts.query = None
+        self.__url__ = urlunsplit(urlparts)
 
     @property
     def __urlsplit__(self):
         '''Return urlsplit() of current URL.'''
         return urlsplit(self.__url__)
+
+    @property
+    def __urlparts__(self):
+        return URLSplitParts(*self.__urlsplit__)
 
     def __getattr__(self, path):
         '''Treat attribute access as path concatenation.'''

@@ -1,7 +1,7 @@
 
 from unittest import TestCase
 
-from ladder import URL, Ladder
+from ladder import URL, API
 
 
 class TestURL(TestCase):
@@ -39,12 +39,6 @@ class TestURL(TestCase):
         self.assertEqual(
             str(URL(append_slash=True).foo),
             'foo/'
-        )
-
-    def test_fragment(self):
-        self.assertEqual(
-            str(URL('#fragment').foo.bar(a=1)),
-            'foo/bar?a=1#fragment'
         )
 
     def test_port(self):
@@ -105,12 +99,12 @@ class MockClient(object):
         return ('delete', args, kargs)
 
 
-class TestLadder(TestCase):
+class TestAPI(TestCase):
     client = MockClient()
 
     def setUp(self):
-        self.api_lower = Ladder(self.client, 'http://github.com', uppercase_methods=False)
-        self.api_upper = Ladder(self.client, 'http://github.com', uppercase_methods=True)
+        self.api_lower = API(self.client, 'http://github.com', upper_methods=False)
+        self.api_upper = API(self.client, 'http://github.com', upper_methods=True)
 
     def test_head_method(self):
         expected = ('head', ('http://github.com/foo',), {'a': 1})

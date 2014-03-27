@@ -71,18 +71,15 @@ class URL(object):
         '''Treat attribute access as path concatenation.'''
         return self(path)
 
-    def __call__(self, *path, **params):
+    def __call__(self, *paths, **params):
         '''Generate a new URL while extending the `url` with `path` and query `params`.'''
         state = deepcopy(self.__getstate__())
 
-        # Only append paths to url path part.
-        url = list(self.__urlsplit__)
-        url[2] = urlpathjoin(url[2], *path)
-        state['url'] = urlunsplit(url)
 
+        state['url'] = urlpathjoin(state['url'], *paths)
         state['params'].update(params)
 
-        # Use `self.__class__` in case we are a subclass.
+        # Use `__class__` to spawn new generation in case we are a subclass.
         return self.__class__(**state)
 
 

@@ -94,17 +94,17 @@ class API(URL):
 
     Since the HTTP verbs are class methods, if
     '''
-    __attrs__ = ['__client__', '__url__', '__params__', '__append_slash__', '__uppercase_methods__']
+    __attrs__ = ['__client__', '__url__', '__params__', '__append_slash__', '__upper_methods__']
     __http_methods__ = ['head', 'options', 'get', 'post', 'put', 'patch', 'delete']
 
-    def __init__(self, client, url='', params=None, append_slash=False, uppercase_methods=True):
+    def __init__(self, client, url='', params=None, append_slash=False, upper_methods=True):
         super(API, self).__init__(url, params, append_slash)
         self.__client__ = client
-        self.__uppercase_methods__ = uppercase_methods
+        self.__upper_methods__ = upper_methods
 
         # Dynamically set client proxy methods accessed during the getattr call.
         self.__methods__ = [
-            method.upper() if self.__uppercase_methods__ else method for method in self.__http_methods__
+            method.upper() if self.__upper_methods__ else method for method in self.__http_methods__
         ]
 
     def __getattr__(self, attr):

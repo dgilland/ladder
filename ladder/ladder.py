@@ -1,7 +1,6 @@
 '''Easy URL generation via object notation.
 '''
 
-from copy import deepcopy
 from functools import partial
 
 from ._compat import (
@@ -46,7 +45,14 @@ class URL(object):
         '''Return self.__attrs__ resolved onto self with leading/trailing `__` removed.
         This is used to propagate init args to next URL generation.
         '''
-        return dict((attr.replace('__', ''), getattr(self, attr, None)) for attr in self.__attrs__)
+        state = dict((attr.replace('__', ''), getattr(self, attr, None)) for attr in self.__attrs__)
+
+        # Only shallow copy `params` since we just want to ensure updating `params`
+        # doesn't modify previous generations. Could use deepcopy but want to avoid
+        # the overhead.
+        state['params'] = state['params'].copy()
+
+        return state
 
     def __geturl__(self):
         '''Return current URL as string. Combines query string parameters found in
@@ -73,8 +79,7 @@ class URL(object):
 
     def __call__(self, *paths, **params):
         '''Generate a new URL while extending the `url` with `path` and query `params`.'''
-        state = deepcopy(self.__getstate__())
-
+        state = self.__getstate__()
 
         state['url'] = urlpathjoin(state['url'], *paths)
         state['params'].update(params)

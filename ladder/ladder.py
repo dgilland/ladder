@@ -5,6 +5,7 @@ from functools import partial
 
 from ._compat import (
     text_type,
+    iteritems,
     urlencode,
     urlsplit,
     urlunsplit,
@@ -31,14 +32,11 @@ class URL(object):
     __attrs__ = ['__url__', '__params__', '__append_slash__']
 
     def __init__(self, url=None, params=None, append_slash=False):
-        if params is None:
-            params = {}
-
         self.__url__ = urlpathjoin(url)
-        self.__params__ = params
         self.__append_slash__ = append_slash
+        self.__params__ = []
 
-        self.__mergeparams__()
+        self.__setparams__(params)
 
     def __str__(self):
         return self.__geturl__()
@@ -62,11 +60,6 @@ class URL(object):
         '''
         state = dict((attr.replace('__', ''), getattr(self, attr, None)) for attr in self.__attrs__)
 
-        # Only shallow copy `params` since we just want to ensure updating `params`
-        # doesn't modify previous generations. Could use deepcopy but want to avoid
-        # the overhead.
-        state['params'] = state['params'].copy()
-
         return state
 
     def __geturl__(self):
@@ -81,16 +74,19 @@ class URL(object):
 
         return urlunsplit(urlparts)
 
-    def __mergeparams__(self):
+    def __setparams__(self, params):
         '''Extract any query string parameters from URL and merge with `params`.'''
         urlparts = self.__urlparts__
         if urlparts.query:
             # move url query to params and remove it from url string
-            params = dict(parse_qsl(urlparts.query))
-            params.update(self.__params__)
-            self.__params__ = params
+            self.__params__ += parse_qsl(urlparts.query)
             urlparts.query = None
-        self.__url__ = urlunsplit(urlparts)
+            self.__url__ = urlunsplit(urlparts)
+
+        if params:
+            if isinstance(params, dict):
+                params = list(iteritems(params))
+            self.__params__ += params
 
     @property
     def __urlsplit__(self):
@@ -111,7 +107,7 @@ class URL(object):
         state = self.__getstate__()
 
         state['url'] = urlpathjoin(state['url'], *paths)
-        state['params'].update(params)
+        state['params'] += list(iteritems(params))
 
         # Use `__class__` to spawn new generation in case we are a subclass.
         return self.__class__(**state)

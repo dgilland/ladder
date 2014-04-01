@@ -20,7 +20,7 @@ But why use `ladder` instead of `hammock`?
 
 - No `requests` dependency. If your using `hammock` then you probably already want to use `requests`. But for those of you who are using another type of HTTP client, then `ladder` can be your `hammock`.
 - Since there's no `requests` dependency, you can generate URLs using `ladder.URL` without having an HTTP client.
-- Inline handling of query string parameters. `hammock` requires that query parameters be passed into the `requests` method call (e.g. `Hammock(...).GET(params={...}`). But with `ladder.API`, you can provide those via keyword arguments at any time during URL generation (e.g. `API(...)(sort='stars').GET()`) or you can stick with `hammock`'s style (`API(...).GET(params={...}`).
+- Inline handling of query string parameters. `hammock` requires that query parameters be passed into the `requests` method call (e.g. `Hammock(...).GET(params={...}`). But with `ladder.API`, you can provide those via keyword arguments at any time during URL generation (e.g. `API(...)(sort='stars').GET()`) or you can stick with `hammock`'s style (`API(...).GET(params={...}`). `API` even supports extracting query parameters from string urls.
 - You can force the HTTP method functions to be lowercase instead of UPPERCASE, i.e., `API(...).GET()` or `API(..., upper_methods=False).get()`.
 
 Beyond that the differences between `ladder` and `hammock` are under the hood.
@@ -121,6 +121,13 @@ Create partial URL paths:
 ```python
 print(URL('/path/to/resource').subresource)
 # /path/to/resource/subresource
+```
+
+Supply query string parameters in a variety of ways:
+
+```python
+print(URL('/path/with?a=1')('query?so=cool', foo='bar')(b=2, c=3)(d=4)(a=2))
+# /path/with/query?so=cool&a=1&foo=bar&b=2&c=3&d=4&a=2
 ```
 
 Convert `URL` to string:

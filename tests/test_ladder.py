@@ -16,7 +16,7 @@ class TestURL(TestCase):
         self.assertEqual(str(URL().foo.bar(1, 'one').baz(a='a').qux), 'foo/bar/1/one/baz/qux?a=a')
 
     def test_params(self):
-        url = URL()('/foo?a=1&b=2').bar(c=3)('?a=0')
+        url = URL(params={'a': '2'})('/foo?a=1&b=2').bar(c=3)('?a=0')
         urlsplit = str(url).split('?')
 
         self.assertEqual(len(urlsplit), 2)
@@ -24,7 +24,12 @@ class TestURL(TestCase):
         params = urlsplit[1].split('&')
 
         self.assertEqual(urlsplit[0], '/foo/bar/')
-        self.assertEqual(set(params), set(['a=1', 'b=2', 'c=3']))
+        self.assertEqual(set(params), set(['a=0', 'a=1', 'a=2', 'b=2', 'c=3']))
+
+    def test_multiple_params(self):
+        url = URL('/')(a=1)(a=2)(a=3)
+        params = str(url).split('?')[1].split('&')
+        self.assertEqual(set(params), set(['a=1', 'a=2', 'a=3']))
 
     def test_leading_slash(self):
         self.assertEqual(str(URL()('/foo').bar), '/foo/bar')

@@ -1,4 +1,4 @@
-## v0.2.2 (2014-04-XX)
+## v0.2.2 (2014-04-01)
 
 - Support mulitple query parameters instead of overriding with last supplied.
 

@@ -1,6 +1,6 @@
 # pylint: skip-file
-'''Python 2/3 compatibility
-'''
+"""Python 2/3 compatibility
+"""
 
 import sys
 
@@ -8,7 +8,8 @@ import sys
 PY3 = sys.version_info[0] == 3
 
 if PY3:  # pragma: no cover
-    from urllib.parse import urlencode, urlsplit, urlunsplit, parse_qs, parse_qsl
+    from urllib.parse import (
+        urlencode, urlsplit, urlunsplit, parse_qs, parse_qsl)
 
     text_type = str
 

@@ -1,4 +1,4 @@
-.PHONY: build clean install test test-full release travisci-install travisci-test
+.PHONY: build clean clean-env clean-files install test test-full lint pep8 pylint release travisci-install travisci-test
 
 ##
 # Variables
@@ -51,7 +51,7 @@ test-full:
 lint: pylint pep8
 
 pep8:
-	$(ENV_ACT) tox -e pep8
+	$(ENV_ACT) pep8 $(PYTEST_TARGET)
 
 pylint:
 	$(ENV_ACT) pylint $(COVERAGE_TARGET)

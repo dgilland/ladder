@@ -150,9 +150,11 @@ def urlpathjoin(*paths):
 
     >>> assert urlpathjoin('') == ''
     >>> assert urlpathjoin(['', '/a']) == '/a'
+    >>> assert urlpathjoin(['a', '/']) == 'a/'
     >>> assert urlpathjoin(['', '/a', '', '', 'b']) == '/a/b'
     >>> assert urlpathjoin(['/a/', 'b/', '/c', 'd', 'e/']) == '/a/b/c/d/e/'
     >>> assert urlpathjoin(['a', 'b', 'c']) == 'a/b/c'
+    >>> assert urlpathjoin(['a/b', '/c/d/', '/e/f']) == 'a/b/c/d/e/f'
     >>> assert urlpathjoin('/', 'a', 'b', 'c', 1, '/') == '/a/b/c/1/'
     >>> assert urlpathjoin([]) == ''
     '''

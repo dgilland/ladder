@@ -1,5 +1,5 @@
-'''Define project metadata
-'''
+"""Define project metadata
+"""
 
 __all__ = [
     '__title__',
@@ -12,10 +12,11 @@ __all__ = [
 ]
 
 __title__ = 'ladder'
-__summary__ = 'HTTP client wrapper with URL generation via object notation and argument passing'
+__summary__ = 'HTTP client wrapper with URL generation via object ' + \
+              'notation and argument passing'
 __url__ = 'https://github.com/dgilland/ladder'
 
-__version__ = '0.2.1'
+__version__ = '0.2.2'
 
 __author__ = 'Derrick Gilland'
 __email__ = 'dgilland@gmail.com'

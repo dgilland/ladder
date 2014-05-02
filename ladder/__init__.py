@@ -1,5 +1,5 @@
-'''Package API
-'''
+"""Package API
+"""
 
 from .ladder import URL, API, urlpathjoin, flatten, iterflatten
 

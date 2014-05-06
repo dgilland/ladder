@@ -1,3 +1,7 @@
+## v0.2.4 (2014-05-06)
+
+- Remove usage of `deepcopy` and ensure `URL` state isn't modified during regeneration.
+
 ## v0.2.3 (2014-05-06)
 
 - Fix bug where including params in `URL()` resulted in previous instance's params being modified, i.e., `x = URL('/'); y = x(a=1)` resulted in `a=1` being added to `x`.

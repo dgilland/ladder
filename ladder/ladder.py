@@ -2,7 +2,6 @@
 """
 
 from functools import partial
-from copy import deepcopy
 
 from ._compat import (
     text_type,
@@ -70,7 +69,7 @@ class URL(object):
         state = dict((attr.replace('__', ''), getattr(self, attr, None))
                      for attr in self.__attrs__)
 
-        return deepcopy(state)
+        return state
 
     def __geturl__(self):
         """Return current URL as string. Combines query string parameters found
@@ -122,7 +121,7 @@ class URL(object):
         state = self.__getstate__()
 
         state['url'] = urlpathjoin(state['url'], *paths)
-        state['params'] += list(iteritems(params))
+        state['params'] = state['params'] + list(iteritems(params))
 
         # Use `__class__` to spawn new generation in case we are a subclass.
         return self.__class__(**state)

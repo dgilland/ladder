@@ -9,6 +9,9 @@ class TestURL(TestCase):
     def test_empty_url(self):
         self.assertEqual(str(URL()), '')
 
+    def test_single_slash_url(self):
+        self.assertEqual(str(URL('/')), '/')
+
     def test_initialized_url(self):
         self.assertEqual(str(URL('http://github.com')), 'http://github.com')
 
@@ -32,6 +35,12 @@ class TestURL(TestCase):
         url = URL('/')(a=1)(a=2)(a=3)
         params = str(url).split('?')[1].split('&')
         self.assertEqual(set(params), set(['a=1', 'a=2', 'a=3']))
+
+    def test_instance_regeneration(self):
+        url = URL('/foo')
+        original = str(url)
+        url(a=1)
+        self.assertEqual(str(url), original)
 
     def test_leading_slash(self):
         self.assertEqual(str(URL()('/foo').bar), '/foo/bar')

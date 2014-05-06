@@ -2,6 +2,7 @@
 """
 
 from functools import partial
+from copy import deepcopy
 
 from ._compat import (
     text_type,
@@ -69,7 +70,7 @@ class URL(object):
         state = dict((attr.replace('__', ''), getattr(self, attr, None))
                      for attr in self.__attrs__)
 
-        return state
+        return deepcopy(state)
 
     def __geturl__(self):
         """Return current URL as string. Combines query string parameters found
@@ -88,6 +89,7 @@ class URL(object):
         `params`.
         """
         urlparts = self.__urlparts__
+
         if urlparts.query:
             # move url query to params and remove it from url string
             self.__params__ += parse_qsl(urlparts.query)
@@ -186,11 +188,19 @@ def urlpathjoin(*paths):
     >>> assert urlpathjoin([]) == ''
     """
     paths = [text_type(path) for path in flatten(paths) if path]
-    leading = '/' if paths and paths[0].startswith('/') else ''
-    trailing = '/' if paths and paths[-1].endswith('/') else ''
-    url = (leading +
-           '/'.join([p.strip('/') for p in paths if p.strip('/')]) +
-           trailing)
+
+    if len(paths) == 1:
+        # Special case where there's no need to join anything.
+        # Doing this because if path==['/'], then an extra slash would be added
+        # if the else clause ran instead.
+        url = paths[0]
+    else:
+        leading = '/' if paths and paths[0].startswith('/') else ''
+        trailing = '/' if paths and paths[-1].endswith('/') else ''
+        url = (leading +
+               '/'.join([p.strip('/') for p in paths if p.strip('/')]) +
+               trailing)
+
     return url
 
 

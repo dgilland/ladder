@@ -177,6 +177,7 @@ def urlpathjoin(*paths):
     slashes if present on first and last elements respectively.
 
     >>> assert urlpathjoin('') == ''
+    >>> assert urlpathjoin('/') == '/'
     >>> assert urlpathjoin(['', '/a']) == '/a'
     >>> assert urlpathjoin(['a', '/']) == 'a/'
     >>> assert urlpathjoin(['', '/a', '', '', 'b']) == '/a/b'

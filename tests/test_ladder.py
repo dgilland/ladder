@@ -36,6 +36,11 @@ class TestURL(TestCase):
         params = str(url).split('?')[1].split('&')
         self.assertEqual(set(params), set(['a=1', 'a=2', 'a=3']))
 
+    def test_multiple_params_list(self):
+        url = URL('/')(a=[1, 2, 3])
+        params = str(url).split('?')[1].split('&')
+        self.assertEqual(set(params), set(['a=1', 'a=2', 'a=3']))
+
     def test_instance_regeneration(self):
         url = URL('/foo')
         original = str(url)

@@ -1,3 +1,7 @@
+## v0.3.0 (2014-05-19)
+
+- If `URL` param value is a `list` or `tuple`, then flatten it so that each value is mapped to the param key as a separate query parameter (i.e. `a=[1, 2, 3] => '?a=1&a=2&a=3'`).
+
 ## v0.2.4 (2014-05-06)
 
 - Remove usage of `deepcopy` and ensure `URL` state isn't modified during regeneration.

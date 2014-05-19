@@ -128,6 +128,9 @@ Supply query string parameters in a variety of ways:
 ```python
 print(URL('/path/with?a=1')('query?so=cool', foo='bar')(b=2, c=3)(d=4)(a=2))
 # /path/with/query?so=cool&a=1&foo=bar&b=2&c=3&d=4&a=2
+
+print(URL('/')(a=[1, 2, 3])(b=4)(b=5)(c=(6,7))
+# /?a=1&a=2&a=3&b=4&b=5&c=6&c=7
 ```
 
 Convert `URL` to string:

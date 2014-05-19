@@ -96,9 +96,7 @@ class URL(object):
             self.__url__ = urlunsplit(urlparts)
 
         if params:
-            if isinstance(params, dict):
-                params = list(iteritems(params))
-            self.__params__ += params
+            self.__params__ += flatten_params(params)
 
     @property
     def __urlsplit__(self):
@@ -222,3 +220,24 @@ def flatten(items):
     >>> assert flatten([1, [2,3], [4, [5, [6]], 7], 8]) == [1,2,3,4,5,6,7,8]
     """
     return list(iterflatten(items))
+
+
+def flatten_params(params):
+    """Flatten URL params into list of tuples. If any param value is a list or
+    tuple, then map each value to the param key.
+    >>> params = [('a', 1), ('a', [2, 3])]
+    >>> assert flatten_params(params) == [('a', 1), ('a', 2), ('a', 3)]
+    >>> params = {'a': [1, 2, 3]}
+    >>> assert flatten_params(params) == [('a', 1), ('a', 2), ('a', 3)]
+    """
+    if isinstance(params, dict):
+        params = list(iteritems(params))
+
+    flattened = []
+    for param, value in params:
+        if isinstance(value, (list, tuple)):
+            flattened += zip([param] * len(value), value)
+        else:
+            flattened.append((param, value))
+
+    return flattened

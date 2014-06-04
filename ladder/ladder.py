@@ -1,56 +1,37 @@
-"""Easy URL generation via object notation.
+"""Generic interface for path generation.
 """
 
-from functools import partial
-
-from ._compat import (
-    text_type,
-    iteritems,
-    urlencode,
-    urlsplit,
-    urlunsplit,
-    parse_qsl
-)
+from .utils import require_override
 
 
-class URLSplitParts(object):
-    """Convert return from urlsplit into an updatable named attribute object.
+class Ladder(object):
+    """Base class used to provide common methods for creating a path or
+    path-like generator.
+
+    This class should NOT be used directly and should instead only be used
+    as a super class.
     """
-    def __init__(self, scheme, netloc, path, query, fragment):
-        self.scheme = scheme
-        self.netloc = netloc
-        self.path = path
-        self.query = query
-        self.fragment = fragment
 
-    def __iter__(self):
-        return iter([
-            self.scheme,
-            self.netloc,
-            self.path,
-            self.query,
-            self.fragment
-        ])
+    # Define our state attributes which correspond to the argument names of
+    # the __init__() function. These attributes (minus the leading and trailing
+    # "__") will be passed to subsequent generative calls.
+    __attrs__ = ['__pathway__']
 
-
-class URL(object):
-    """Generate URLs using object notation."""
-
-    __attrs__ = ['__url__', '__params__', '__append_slash__']
-
-    def __init__(self, url=None, params=None, append_slash=False):
-        self.__url__ = urlpathjoin(url)
-        self.__append_slash__ = append_slash
-        self.__params__ = []
-
-        self.__setparams__(params)
+    # You are required to override this method. Parameters defined in __attrs__
+    # will be passed to this function via **argument unpacking in __call__().
+    # WARNING: Inside this function, the class instance attributes in __attrs__
+    # should be assigned. If they are not, then a recursion error will result
+    # during the generative call.
+    @require_override
+    def __init__(self, pathway=None, **params):  # pragma: no cover
+        pass
 
     def __str__(self):
-        return self.__geturl__()
+        return self.__getpathway__()
 
     def __repr__(self):   # pragma: no cover
-        return '<{0} url={1}>'.format(
-            self.__class__.__name__, self.__geturl__())
+        return '<{0} path="{1}">'.format(
+            self.__class__.__name__, self.__getpathway__())
 
     def __add__(self, other):
         return self(other)
@@ -64,180 +45,32 @@ class URL(object):
 
     def __getstate__(self):
         """Return self.__attrs__ resolved onto self with leading/trailing `__`
-        removed. This is used to propagate init args to next URL generation.
+        removed. This is used to propagate init args to next class generation.
         """
         state = dict((attr.replace('__', ''), getattr(self, attr, None))
                      for attr in self.__attrs__)
 
         return state
 
-    def __geturl__(self):
-        """Return current URL as string. Combines query string parameters found
-        in string URL with any named parameters created during `__call__`."""
-        urlparts = self.__urlparts__
-
-        if self.__append_slash__ and not urlparts.path.endswith('/'):
-            urlparts.path = urlparts.path + '/'
-
-        urlparts.query = urlencode(self.__params__)
-
-        return urlunsplit(urlparts)
-
-    def __setparams__(self, params):
-        """Extract any query string parameters from URL and merge with
-        `params`.
-        """
-        urlparts = self.__urlparts__
-
-        if urlparts.query:
-            # move url query to params and remove it from url string
-            self.__params__ += parse_qsl(urlparts.query)
-            urlparts.query = None
-            self.__url__ = urlunsplit(urlparts)
-
-        if params:
-            self.__params__ += flatten_params(params)
-
-    @property
-    def __urlsplit__(self):
-        """Return urlsplit() of current URL."""
-        return urlsplit(self.__url__)
-
-    @property
-    def __urlparts__(self):
-        """Return urlsplit as URLSplitParts object."""
-        return URLSplitParts(*self.__urlsplit__)
-
     def __getattr__(self, path):
         """Treat attribute access as path concatenation."""
         return self(path)
 
-    def __call__(self, *paths, **params):
-        """Generate a new URL while extending the `url` with `path` and query
-        `params`.
+    def __getpathway__(self):
+        """Return current object as string."""
+        return self.__pathway__
+
+    @require_override
+    def __preparestate__(self, *paths, **params):  # pragma: no cover
+        """Given paths and params prepare arguments for call to
+        class(**state).
+
+        Generally, you will want to call self.__getstate__() and mutate the
+        data in some way to get to the "next" class instance.
         """
-        state = self.__getstate__()
+        pass
 
-        state['url'] = urlpathjoin(state['url'], *paths)
-        state['params'] = state['params'] + list(iteritems(params))
-
-        # Use `__class__` to spawn new generation in case we are a subclass.
+    def __call__(self, *paths, **params):
+        """Generate a new class instance from our self."""
+        state = self.__preparestate__(*paths, **params)
         return self.__class__(**state)
-
-
-class API(URL):
-    """Add URL generation to an HTTP request client. Requires that the `client`
-    support HTTP verbs as lowercase methods. An example client would be the one
-    from Requests package.
-    """
-    __attrs__ = [
-        '__client__',
-        '__url__',
-        '__params__',
-        '__append_slash__',
-        '__upper_methods__'
-    ]
-
-    __http_methods__ = [
-        'head',
-        'options',
-        'get',
-        'post',
-        'put',
-        'patch',
-        'delete'
-    ]
-
-    def __init__(self, client, url='', params=None,
-                 append_slash=False, upper_methods=True):
-        super(API, self).__init__(url, params, append_slash)
-        self.__client__ = client
-        self.__upper_methods__ = upper_methods
-
-        # Dynamically set client proxy methods accessed during the getattr
-        # call.
-        self.__methods__ = [
-            method.upper() if self.__upper_methods__ else method
-            for method in self.__http_methods__
-        ]
-
-    def __getattr__(self, attr):
-        if attr in self.__methods__:
-            # Proxy call to client method with url bound to first argument.
-            return partial(getattr(self.__client__, attr.lower()),
-                           self.__geturl__())
-        else:
-            return super(API, self).__getattr__(attr)
-
-
-def urlpathjoin(*paths):
-    """Join URL paths into single URL while maintaining leading and trailing
-    slashes if present on first and last elements respectively.
-
-    >>> assert urlpathjoin('') == ''
-    >>> assert urlpathjoin('/') == '/'
-    >>> assert urlpathjoin(['', '/a']) == '/a'
-    >>> assert urlpathjoin(['a', '/']) == 'a/'
-    >>> assert urlpathjoin(['', '/a', '', '', 'b']) == '/a/b'
-    >>> assert urlpathjoin(['/a/', 'b/', '/c', 'd', 'e/']) == '/a/b/c/d/e/'
-    >>> assert urlpathjoin(['a', 'b', 'c']) == 'a/b/c'
-    >>> assert urlpathjoin(['a/b', '/c/d/', '/e/f']) == 'a/b/c/d/e/f'
-    >>> assert urlpathjoin('/', 'a', 'b', 'c', 1, '/') == '/a/b/c/1/'
-    >>> assert urlpathjoin([]) == ''
-    """
-    paths = [text_type(path) for path in flatten(paths) if path]
-
-    if len(paths) == 1:
-        # Special case where there's no need to join anything.
-        # Doing this because if path==['/'], then an extra slash would be added
-        # if the else clause ran instead.
-        url = paths[0]
-    else:
-        leading = '/' if paths and paths[0].startswith('/') else ''
-        trailing = '/' if paths and paths[-1].endswith('/') else ''
-        url = (leading +
-               '/'.join([p.strip('/') for p in paths if p.strip('/')]) +
-               trailing)
-
-    return url
-
-
-def iterflatten(items):
-    """Return iterator which flattens list/tuple of lists/tuples
-    >>> to_flatten = [1, [2,3], [4, [5, [6]], 7], 8]
-    >>> assert list(iterflatten(to_flatten)) == [1,2,3,4,5,6,7,8]
-    """
-    for item in items:
-        if isinstance(item, (list, tuple)):
-            for itm in flatten(item):
-                yield itm
-        else:
-            yield item
-
-
-def flatten(items):
-    """Return flattened list of a list/tuple of lists/tuples
-    >>> assert flatten([1, [2,3], [4, [5, [6]], 7], 8]) == [1,2,3,4,5,6,7,8]
-    """
-    return list(iterflatten(items))
-
-
-def flatten_params(params):
-    """Flatten URL params into list of tuples. If any param value is a list or
-    tuple, then map each value to the param key.
-    >>> params = [('a', 1), ('a', [2, 3])]
-    >>> assert flatten_params(params) == [('a', 1), ('a', 2), ('a', 3)]
-    >>> params = {'a': [1, 2, 3]}
-    >>> assert flatten_params(params) == [('a', 1), ('a', 2), ('a', 3)]
-    """
-    if isinstance(params, dict):
-        params = list(iteritems(params))
-
-    flattened = []
-    for param, value in params:
-        if isinstance(value, (list, tuple)):
-            flattened += zip([param] * len(value), value)
-        else:
-            flattened.append((param, value))
-
-    return flattened

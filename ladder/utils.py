@@ -45,8 +45,8 @@ def delimitedpathjoin(delimiter, *paths):
 
     if len(paths) == 1:
         # Special case where there's no need to join anything.
-        # Doing this because if path==[delimiter], then an extra slash would be added
-        # if the else clause ran instead.
+        # Doing this because if path==[delimiter], then an extra slash would be
+        # added if the else clause ran instead.
         path = paths[0]
     else:
         leading = delimiter if paths and paths[0].startswith(delimiter) else ''

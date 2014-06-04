@@ -1,3 +1,5 @@
+## v0.4.0 (2014-06-03)
+
 - Rename `URL` class to `URLPath` for consistency with newly expanded library API. **breaking change**
 - Add `DelimitedPath` class to handle path generation using a delimiter.
 - Add `OSPath` class to handle OS path generation.

@@ -42,7 +42,7 @@ install:
 test:
 	$(ENV_ACT) py.test $(PYTEST_ARGS) $(COVERAGE_ARGS) $(COVERAGE_TARGET) $(PYTEST_TARGET)
 
-test-full: lint test-tox clean-files
+test-full: clean-files lint test-tox clean-files
 
 test-tox:
 	rm -rf .tox

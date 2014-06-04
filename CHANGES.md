@@ -1,3 +1,8 @@
+- Rename `URL` class to `URLPath` for consistency with newly expanded library API. **breaking change**
+- Add `DelimitedPath` class to handle path generation using a delimiter.
+- Add `OSPath` class to handle OS path generation.
+- Add `Ladder` base class for all path generation classes. Cannot be used directly; has to be used as a parent class.
+
 ## v0.3.0 (2014-05-19)
 
 - If `URL` param value is a `list` or `tuple`, then flatten it so that each value is mapped to the param key as a separate query parameter (i.e. `a=[1, 2, 3] => '?a=1&a=2&a=3'`).

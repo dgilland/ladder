@@ -1,3 +1,7 @@
+## v0.4.1 (2014-07-26)
+
+- Fix `utils.iterflatten()` by calling `iterflatten()` instead of `flatten` in recursive loop.
+
 ## v0.4.0 (2014-06-03)
 
 - Rename `URL` class to `URLPath` for consistency with newly expanded library API. **breaking change**

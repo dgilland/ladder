@@ -17,7 +17,7 @@ __summary__ = ('General purpose path generation library with support for '
 
 __url__ = 'https://github.com/dgilland/ladder'
 
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 
 __author__ = 'Derrick Gilland'
 __email__ = 'dgilland@gmail.com'

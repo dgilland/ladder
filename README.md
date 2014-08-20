@@ -69,7 +69,7 @@ For me this made working with the test client easier to manage and more enjoyabl
 
 Hammock can already do most of what `ladder` does when working with a [requests] based client. So why use `ladder` instead of `hammock` then?
 
-- No `requests` dependency. If your using `hammock` then you probably already want to use `requests`. But for those of you who are using another type of HTTP client, then `ladder` can be your `hammock`.
+- No `requests` dependency. If you're using `hammock` then you probably already want to use `requests`. But for those of you who are using another type of HTTP client, then `ladder` can be your `hammock`.
 - Since there's no `requests` dependency, you can generate URLs using `ladder.URLPath` without having an HTTP client.
 - Inline handling of query string parameters. `hammock` requires that query parameters be passed into the `requests` method call (e.g. `Hammock(...).GET(params={...}`). But with `ladder.API`, you can provide those via keyword arguments at any time during URL generation (e.g. `API(...)(sort='stars').GET()`) or you can stick with `hammock`'s style (`API(...).GET(params={...}`). `API` even supports extracting query parameters from string urls.
 - You can force the HTTP method functions to be lowercase instead of UPPERCASE, i.e., `API(...).GET()` or `API(..., upper_methods=False).get()`.

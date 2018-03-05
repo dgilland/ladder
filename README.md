@@ -7,10 +7,10 @@
 |_|\__,_|\__,_|\__,_|\___|_|
 ```
 
-[![Package Version](https://pypip.in/v/ladder/badge.png)](https://pypi.python.org/pypi/ladder/)
+[![Package Version](https://img.shields.io/pypi/v/ladder.svg)](https://pypi.python.org/pypi/ladder/)
 [![Build Status](https://travis-ci.org/dgilland/ladder.png?branch=master)](https://travis-ci.org/dgilland/ladder)
 [![Coverage Status](https://coveralls.io/repos/dgilland/ladder/badge.png?branch=master)](https://coveralls.io/r/dgilland/ladder)
-[![License](https://pypip.in/license/ladder/badge.png)](https://pypi.python.org/pypi/ladder/)
+[![License](https://img.shields.io/pypi/l/ladder.svg)](https://pypi.python.org/pypi/ladder/)
 
 General purpose path generation library with support for URLs, OS paths, delimited paths, and RESTful HTTP client integration.
 
